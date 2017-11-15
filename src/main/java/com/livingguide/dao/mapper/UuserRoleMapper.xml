@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.livingguide.dao.UuserRoleDAO">
+
+	<resultMap id="UuserRoleResultMap" type="com.livingguide.vo.UuserRolePO">
+		<result property="uid" column="uid" />
+		<result property="rid" column="rid" />
+	</resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="UuserRole_columns">
+	    <![CDATA[
+		uid,rid
+	    ]]>
+	</sql>
+
+	<!-- 新增 -->
+	<insert id="create">
+	    <![CDATA[
+	        INSERT INTO u_user_role (
+	        	uid ,
+	        	rid 
+	        ) VALUES (
+	        	#{uid} ,
+	        	#{rid} 
+	        )
+	   	 ]]>
+	</insert>
+
+	<update id="update">
+	    <![CDATA[
+	        UPDATE u_user_role SET
+		        rid = #{rid} 
+	        WHERE 
+		        uid = #{uid} 
+	   	 ]]>
+	</update>
+
+	<delete id="delete">
+	    <![CDATA[
+	        DELETE FROM u_user_role WHERE
+	        uid = #{id} 
+	    ]]>
+	</delete>
+
+	<select id="getById" resultMap="UuserRoleResultMap">
+		SELECT
+		<include refid="UuserRole_columns" />
+	    <![CDATA[
+		    FROM u_user_role 
+	        WHERE 
+		        uid = #{id} 
+	    ]]>
+	</select>
+
+	<sql id="query_where">
+		<where>
+			<if test="@com.livingguide.Ognl@isNotEmpty(uid)">
+				AND uid = #{uid}			</if>
+			<if test="@com.livingguide.Ognl@isNotEmpty(rid)">
+				AND rid = #{rid}			</if>
+		</where>
+	</sql>
+
+	<select id="queryByPage" resultMap="UuserRoleResultMap">
+		SELECT
+		<include refid="UuserRole_columns" />
+		FROM u_user_role
+		<include refid="query_where" />
+	</select>
+
+</mapper>
+

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	
+	<!-- 支持注解 -->
+	<context:annotation-config/>
+	
+	<!-- 自动扫描包,支持Controller-->
+	<context:component-scan base-package="com.livingguide.Controller"/>
+	<!-- <context:component-scan base-package="com.ferry.life" use-default-filters="false"> -->
+		<!-- <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/> -->
+	<!-- </context:component-scan> -->
+	
+	<!-- 会自动注册了validator ConversionService，不用重复配置 -->
+	<mvc:annotation-driven/>
+	
+	<!-- 筛选请求，将静态资源交给servlet处理，非静态资源请求由DispatcherServlet处理 -->
+	<mvc:default-servlet-handler />
+	<!-- 加载视图静态资源 -->
+	<mvc:resources location="/WEB-INF/static/" mapping="/static/**"/>
+	
+	<!-- 支持返回json(避免IE在ajax请求时，返回json出现下载 ) -->
+	<!-- Spring 视图拦截器 -->
+	<!-- 处理注解@RequestMapping -->
+	<!-- SpringMVC 3.1之后使用 RequestMappingHandlerAdapter 代替 AnnotationMethodHandlerAdapter -->
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+		<property name="massageConverters">
+			<list>
+				<ref bean="MappingJackson2HttpMessageConverter"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="MappingJackson2HttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+		
+	<!-- 配置springMVC处理上传文件的信息 -->  
+     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">   
+         <property name="defaultEncoding" value="utf-8" />   
+         <property name="maxUploadSize" value="10485760000" />   
+         <property name="maxInMemorySize" value="40960" />  
+     </bean>
+     	
+	<!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
+	<bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"	value="org.springframework.web.servlet.view.JstlView" />
+		<property name="contentType" value="text/html" />
+		<property name="prefix" value="/WEB-INF/view/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+</beans>

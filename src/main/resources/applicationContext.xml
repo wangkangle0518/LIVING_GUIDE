@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.3.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+	http://www.springframework.org/schema/jdbc
+	http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+	http://www.springframework.org/schema/cache
+	http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+	<!-- 支持注解 -->
+	<context:annotation-config/>
+	
+	<!-- 自动扫描文件，将所有的注解纳入spring容器管理 -->
+	<!-- <context:component-scan base-package="com.livingguide.service"/> -->
+	<context:component-scan base-package="com.livingguide">
+    	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+
+	<!-- 配置log过滤器 -->
+	<bean id="log-filter" class="com.alibaba.druid.filter.logging.Log4jFilter">
+		<property name="resultSetLogEnabled" value="true" />
+	</bean>
+	
+	<!-- 引入配置文件 -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:db.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 配置druid连接池 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<!-- 基本属性 -->
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+
+		<!-- 配置 初始化大小、最小、最大 -->
+		<property name="initialSize" value="${jdbc.initialSize}" />
+		<property name="minIdle" value="${jdbc.minIdle}" />
+		<property name="maxActive" value="${jdbc.maxActive}" />
+
+		<!-- 配置连接等待超时时间 -->
+		<property name="maxWait" value="${jdbc.maxWait}" />
+
+		<!-- 数据库连接可用性测试语句 -->
+		<property name="validationQuery" value="${jdbc.validationQuery}" />
+
+		<!-- 每次获取一个连接的时候，验证一下连接是否可用 -->
+		<property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+		<property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+		<property name="testOnReturn" value="${jdbc.testOnReturn}" />
+
+		<!-- 配置检测的时间间隔，检测时关闭空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+
+		<!-- 配置连接最小生存时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+
+		<!-- 打开PSCache，并设置每个连接上PSCache的大小，PSCache不支持MySql -->
+		<!-- <property name="poolPreparedStatements" value="true" />
+		<property name="maxOpenPreparedStatements" value="10" /> -->
+		
+		<!-- 是否在自动回收超时连接的时候打印连接的超时错误 -->
+		<property name="logAbandoned" value="true" />
+		
+		<!-- 是否自动回收超时连接 -->
+		<property name="removeAbandoned" value="${jdbc.removeAbandoned}" />
+		
+		<!-- 超时时间(以秒数为单位)  -->
+		<property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}" />
+		
+		<!-- 配置filters -->
+		<!-- 监控数据库 -->
+		<property name="filters" value="${jdbc.filters}" />
+		<!-- <property name="filters" value="stat" /> -->
+		<!-- <property name="filters" value="mergeStat" /> -->
+		
+		<!-- 配置监控统计拦截的filters，去掉后监控界面sql无法统计 -->
+		<property name="proxyFilters">
+			<list>
+				<ref bean="log-filter" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- spring整合mybatis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:configuration.xml"/>
+		<!-- 扫描所有的Mapper文件 -->
+		<property name="mapperLocations">
+			<list>
+				<value>
+					classpath:com/livingguide/dao/mapper/*Mapper.xml
+				</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 配置sqlSessionTemplate持久化模板,获取线程安全的SqlSession -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+	    <constructor-arg ref="sqlSessionFactory"/>
+	</bean>
+	
+	<!-- 根据扫描注解选择mapper实现DAO -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionTemplateBeanName" value="sqlSessionTemplate"/>
+		<!-- 自动扫描dao包 -->
+		<property name="basePackage" value="com.livingguide.dao" />
+		<property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+	</bean>
+	
+	<!-- 开启事务，对dataSource进行事务管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 支持事务注解 -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+	
+	<!-- 开启 aop 代理，使得spring认识 @Aspect -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+	<!-- AOP配置,事务切入点 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.livingguide.service.*.*(..))" id="logPointcut"/>
+		<aop:advisor pointcut-ref="logPointcut" advice-ref="txAdvice" />
+	</aop:config> 
+	
+	<!-- 事务通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- 对增删改方法进行事务管理，只要有异常就回滚 -->
+			<tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="save*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="create*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="query*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="delete*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="remove*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			
+			<!-- 对查询的方法，开启只读，提高数据库访问性能 -->
+			<tx:method name="select*" read-only="true"/>
+			<tx:method name="count*" read-only="true"/>
+			
+			<!-- 对其他方法使用默认的事务管理 -->
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+</beans>

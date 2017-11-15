@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.livingguide.dao.LoginLogDAO">
+
+	<resultMap id="LoginLogResultMap" type="com.livingguide.vo.LoginLogPO">
+		<result property="logId" column="LOG_ID" />
+		<result property="userId" column="USER_ID" />
+		<result property="ip" column="IP" />
+		<result property="loginDatetime" column="LOGIN_DATETIME" />
+	</resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="LoginLog_columns">
+	    <![CDATA[
+		LOG_ID,USER_ID,IP,LOGIN_DATETIME
+	    ]]>
+	</sql>
+
+	<!-- 新增 -->
+	<insert id="create">
+	    <![CDATA[
+	        INSERT INTO login_log (
+	        	LOG_ID ,
+	        	USER_ID ,
+	        	IP ,
+	        	LOGIN_DATETIME 
+	        ) VALUES (
+	        	#{logId} ,
+	        	#{userId} ,
+	        	#{ip} ,
+	        	#{loginDatetime} 
+	        )
+	   	 ]]>
+	</insert>
+
+	<update id="update">
+	    <![CDATA[
+	        UPDATE login_log SET
+		        USER_ID = #{userId} ,
+		        IP = #{ip} ,
+		        LOGIN_DATETIME = #{loginDatetime} 
+	        WHERE 
+		        LOG_ID = #{logId} 
+	   	 ]]>
+	</update>
+
+	<delete id="delete">
+	    <![CDATA[
+	        DELETE FROM login_log WHERE
+	        LOG_ID = #{id} 
+	    ]]>
+	</delete>
+
+	<select id="getById" resultMap="LoginLogResultMap">
+		SELECT
+		<include refid="LoginLog_columns" />
+	    <![CDATA[
+		    FROM login_log 
+	        WHERE 
+		        LOG_ID = #{id} 
+	    ]]>
+	</select>
+
+	<sql id="query_where">
+		<where>
+			<if test="@com.livingguide.Ognl@isNotEmpty(logId)">
+				AND LOG_ID = #{logId}			</if>
+			<if test="@com.livingguide.Ognl@isNotEmpty(userId)">
+				AND USER_ID = #{userId}			</if>
+			<if test="@com.livingguide.Ognl@isNotEmpty(ip)">
+				AND IP = #{ip}			</if>
+			<if test="@com.livingguide.Ognl@isNotEmpty(loginDatetimeBegin)">
+				AND LOGIN_DATETIME >= #{loginDatetimeBegin}			</if>
+			<if test="@com.livingguide.Ognl@isNotEmpty(loginDatetimeEnd)">
+				AND LOGIN_DATETIME &lt;= #{loginDatetimeEnd}			</if>
+		</where>
+	</sql>
+
+	<select id="queryByPage" resultMap="LoginLogResultMap">
+		SELECT
+		<include refid="LoginLog_columns" />
+		FROM login_log
+		<include refid="query_where" />
+	</select>
+
+</mapper>
+

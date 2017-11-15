@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.livingguide.dao.RegisterDAO">
+
+	<resultMap id="RegisterResultMap" type="com.livingguide.vo.RegisterPO">
+		<result property="userId" column="USER_ID" />
+		<result property="userName" column="USER_NAME" />
+		<result property="password" column="PASSWORD" />
+		<result property="version" column="VERSION" />
+	</resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Register_columns">
+	    <![CDATA[
+		USER_ID,USER_NAME,PASSWORD,VERSION
+	    ]]>
+	</sql>
+
+	<!-- 新增 -->
+	<insert id="create">
+	    <![CDATA[
+	        INSERT INTO register (
+	        	USER_ID ,
+	        	USER_NAME ,
+	        	PASSWORD ,
+	        	VERSION 
+	        ) VALUES (
+	        	#{userId} ,
+	        	#{userName} ,
+	        	#{password} ,
+	        	#{version} 
+	        )
+	   	 ]]>
+	</insert>
+
+	<update id="update">
+	    <![CDATA[
+	        UPDATE register SET
+		        USER_NAME = #{userName} ,
+		        PASSWORD = #{password} ,
+		        VERSION = #{version} 
+	        WHERE 
+		        USER_ID = #{userId} 
+	   	 ]]>
+	</update>
+
+	<delete id="delete">
+	    <![CDATA[
+	        DELETE FROM register WHERE
+	        USER_ID = #{id} 
+	    ]]>
+	</delete>
+
+	<select id="getById" resultMap="RegisterResultMap">
+		SELECT
+		<include refid="Register_columns" />
+	    <![CDATA[
+		    FROM register 
+	        WHERE 
+		        USER_ID = #{id} 
+	    ]]>
+	</select>
+
+	<sql id="query_where">
+		<where>
+			<if test="@com.livingguide.Ognl@isNotEmpty(userId)">
+				AND USER_ID = #{userId}			</if>
+			<if test="@com.livingguide.Ognl@isNotEmpty(userName)">
+				AND USER_NAME = #{userName}			</if>
+			<if test="@com.livingguide.Ognl@isNotEmpty(password)">
+				AND PASSWORD = #{password}			</if>
+			<if test="@com.livingguide.Ognl@isNotEmpty(version)">
+				AND VERSION = #{version}			</if>
+		</where>
+	</sql>
+
+	<select id="queryByPage" resultMap="RegisterResultMap">
+		SELECT
+		<include refid="Register_columns" />
+		FROM register
+		<include refid="query_where" />
+	</select>
+
+</mapper>
+
