@@ -8,10 +8,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.livingguide.common.utils.pageutil.Page;
 import com.livingguide.service.UuserService;
 import com.livingguide.vo.UuserPO;
-import com.livingguide.vo.query.UuserQueryModel;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 使用Junit4测试
 @ContextConfiguration(locations = { "classpath*:ApplicationContext.xml" }) // 加载配置文件
