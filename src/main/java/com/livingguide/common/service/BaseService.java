@@ -22,7 +22,7 @@ public class BaseService<M, QM extends BaseModel> extends BComponent implements 
 
 	@Override
 	public boolean update(M m) {
-		return dao.update(m) > 0;
+		return dao.update(m) == 1;
 	}
 
 	@Override
