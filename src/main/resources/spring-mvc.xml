@@ -30,13 +30,14 @@
 	<!-- Spring 视图拦截器 -->
 	<!-- 处理注解@RequestMapping -->
 	<!-- SpringMVC 3.1之后使用 RequestMappingHandlerAdapter 代替 AnnotationMethodHandlerAdapter -->
-	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-		<property name="massageConverters">
-			<list>
-				<ref bean="MappingJackson2HttpMessageConverter"/>
-			</list>
-		</property>
-	</bean>
+<!-- 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/> -->
+<!-- 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"> -->
+<!-- 		<property name="massageConverters"> -->
+<!-- 			<list> -->
+<!-- 				<ref bean="MappingJackson2HttpMessageConverter"/> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
 	
 	<bean id="MappingJackson2HttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 		<property name="supportedMediaTypes">
