@@ -59,13 +59,54 @@
 				</configuration>
 			</plugin>
 			<!-- jetty 服务器 -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.mortbay.jetty</groupId> -->
+			<!-- <artifactId>maven-jetty-plugin</artifactId> -->
+			<!-- <version>6.1.26</version> -->
+			<!-- <configuration> -->
+			<!-- <scanIntervalSeconds>10</scanIntervalSeconds> -->
+			<!-- <webAppSourceDirectory>WebRoot</webAppSourceDirectory> -->
+			<!-- <webDefaultXml>src/site/webdefault.xml</webDefaultXml> -->
+			<!-- <scanTargets> -->
+			<!-- <scanTarget>src/main/java</scanTarget> -->
+			<!-- <scanTarget>src/main/resources</scanTarget> -->
+			<!-- <scanTarget>WebRoot</scanTarget> -->
+			<!-- </scanTargets> -->
+			<!-- <scanTargetPatterns> -->
+			<!-- <scanTargetPattern> -->
+			<!-- <directory>src/main/java</directory> -->
+			<!-- <includes> -->
+			<!-- <include>**</include> -->
+			<!-- </includes> -->
+			<!-- </scanTargetPattern> -->
+			<!-- <scanTargetPattern> -->
+			<!-- <directory>src/main/resources</directory> -->
+			<!-- <includes> -->
+			<!-- <include>**</include> -->
+			<!-- </includes> -->
+			<!-- </scanTargetPattern> -->
+			<!-- <scanTargetPattern> -->
+			<!-- <directory>WebRoot</directory> -->
+			<!-- <includes> -->
+			<!-- <include>**</include> -->
+			<!-- </includes> -->
+			<!-- </scanTargetPattern> -->
+			<!-- </scanTargetPatterns> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
 			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>maven-jetty-plugin</artifactId>
-				<version>6.1.26</version>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
 				<configuration>
+					<url>http://127.0.0.1:8080/manager/text</url>
+					<server>tomcat7</server>
+					<path>/ROOT</path>
+					<charset>utf8</charset>
+					<update>true</update>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webAppSourceDirectory>WebRoot</webAppSourceDirectory>
-					<!-- <webDefaultXml>src/site/webdefault.xml</webDefaultXml> -->
+					<webDefaultXml>src/site/webdefault.xml</webDefaultXml>
 					<scanTargets>
 						<scanTarget>src/main/java</scanTarget>
 						<scanTarget>src/main/resources</scanTarget>
@@ -432,18 +473,24 @@
 		<!-- shiro begin -->
 
 		<!-- shiro + ehcache jar -->
-		<!-- <dependency> -->
-		<!-- <artifactId>ehcache-core</artifactId> -->
-		<!-- <groupId>net.sf.ehcache</groupId> -->
-		<!-- <version>2.5.0</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.shiro</groupId> -->
-		<!-- <artifactId>shiro-ehcache</artifactId> -->
-		<!-- <version>1.2.2</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<artifactId>ehcache-core</artifactId>
+			<groupId>net.sf.ehcache</groupId>
+			<version>2.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-ehcache</artifactId>
+			<version>1.2.2</version>
+		</dependency>
 		<!-- shiro end -->
 
+		<!-- tomcat -->
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-servlet-api</artifactId>
+			<version>8.5.4</version>
+		</dependency>
 
 		<!-- redis begin -->
 		<dependency>
