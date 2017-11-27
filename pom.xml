@@ -22,15 +22,16 @@
 		<!-- maven 默认不编译资源文件，会导致无法实现映射等问题 -->
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>src/main/java</directory>
 				<includes>
+					<include>**/*.java</include>
 					<include>**/*.xml</include>
 					<include>**/*.properties</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>
 			<resource>
-				<directory>src/main/java</directory>
+				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*.xml</include>
 					<include>**/*.properties</include>
@@ -101,12 +102,12 @@
 				<configuration>
 					<url>http://127.0.0.1:8080/manager/text</url>
 					<server>tomcat7</server>
-					<path>/ROOT</path>
+					<!-- <path>/ROOT</path> -->
 					<charset>utf8</charset>
 					<update>true</update>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webAppSourceDirectory>WebRoot</webAppSourceDirectory>
-					<webDefaultXml>src/site/webdefault.xml</webDefaultXml>
+					<!-- <webDefaultXml>src/site/webdefault.xml</webDefaultXml> -->
 					<scanTargets>
 						<scanTarget>src/main/java</scanTarget>
 						<scanTarget>src/main/resources</scanTarget>
