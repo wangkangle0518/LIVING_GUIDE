@@ -20,7 +20,7 @@
 	</context:component-scan>
 
 	<!-- 会自动注册了validator ConversionService，不用重复配置 -->
-	<mvc:annotation-driven />
+	<mvc:annotation-driven ></mvc:annotation-driven>
 
 	<!-- 筛选请求，将静态资源交给servlet处理，非静态资源请求由DispatcherServlet处理 -->
 	<mvc:default-servlet-handler />
