@@ -31,7 +31,11 @@
 	<!-- <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/> -->
 	<bean
 		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-		<property name="messageConverters" ref="MappingJackson2HttpMessageConverter" />
+		<property name="messageConverters" >
+			<list>
+				<ref bean="MappingJackson2HttpMessageConverter"/>
+			</list>
+		</property>
 	</bean>
 
 	<!-- 支持返回json(避免IE在ajax请求时，返回json出现下载 ) -->
