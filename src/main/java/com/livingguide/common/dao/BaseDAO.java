@@ -8,6 +8,6 @@ public interface BaseDAO<M, QM> {
 	public int update(M m);
 	public int delete(int id);
 	
-	public M getById(int id);
+	public M getById(long id);
 	public List<M> queryByPage(QM qm);
 }

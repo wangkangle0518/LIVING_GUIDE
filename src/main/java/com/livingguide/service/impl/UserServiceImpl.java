@@ -34,6 +34,7 @@ public class UserServiceImpl extends BaseService<UserPO, UserQueryModel> impleme
 	 * 
 	 * @param user
 	 */
+	@Override
 	public UserPO createUser(UserPO user) {
 		// 加密密码
 		passwordHelper.encryptPassword(user);
@@ -46,8 +47,9 @@ public class UserServiceImpl extends BaseService<UserPO, UserQueryModel> impleme
 	 * @param userId
 	 * @param newPassword
 	 */
+	@Override
 	public void changePassword(Long userId, String newPassword) {
-		UserPO user = userDAO.findOne(userId);
+		UserPO user = userDAO.getById(userId);
 		user.setPassword(newPassword);
 		passwordHelper.encryptPassword(user);
 		userDAO.updateUser(user);
@@ -59,6 +61,7 @@ public class UserServiceImpl extends BaseService<UserPO, UserQueryModel> impleme
 	 * @param userId
 	 * @param roleIds
 	 */
+	@Override
 	public void correlationRoles(Long userId, Long... roleIds) {
 		userDAO.correlationRoles(userId, roleIds);
 	}
@@ -69,6 +72,7 @@ public class UserServiceImpl extends BaseService<UserPO, UserQueryModel> impleme
 	 * @param userId
 	 * @param roleIds
 	 */
+	@Override
 	public void uncorrelationRoles(Long userId, Long... roleIds) {
 		userDAO.uncorrelationRoles(userId, roleIds);
 	}
@@ -79,6 +83,7 @@ public class UserServiceImpl extends BaseService<UserPO, UserQueryModel> impleme
 	 * @param username
 	 * @return
 	 */
+	@Override
 	public UserPO findByUsername(String username) {
 		return userDAO.findByUsername(username);
 	}
@@ -89,6 +94,7 @@ public class UserServiceImpl extends BaseService<UserPO, UserQueryModel> impleme
 	 * @param username
 	 * @return
 	 */
+	@Override
 	public Set<String> findRoles(String username) {
 		return userDAO.findRoles(username);
 	}
@@ -99,6 +105,7 @@ public class UserServiceImpl extends BaseService<UserPO, UserQueryModel> impleme
 	 * @param username
 	 * @return
 	 */
+	@Override
 	public Set<String> findPermissions(String username) {
 		return userDAO.findPermissions(username);
 	}
