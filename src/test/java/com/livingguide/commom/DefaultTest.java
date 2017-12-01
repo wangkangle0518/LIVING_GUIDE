@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.livingguide.service.UuserService;
-import com.livingguide.vo.UuserPO;
+import com.livingguide.service.UserService;
+import com.livingguide.vo.UserPO;
 
 
 /**
@@ -15,7 +15,7 @@ import com.livingguide.vo.UuserPO;
  */
 public class DefaultTest {
 	
-	private UuserService uuserService;
+	private UserService uuserService;
 	
 	@SuppressWarnings("resource")
 	@Before
@@ -23,12 +23,12 @@ public class DefaultTest {
 	    //使用"spring.xml"和"spring-mybatis.xml"这两个配置文件创建Spring上下文
 	    ApplicationContext ac = new ClassPathXmlApplicationContext(new String[]{"ApplicationContext.xml"});
 	    //从Spring容器中根据bean的id取出我们要使用的userService对象
-	    uuserService = (UuserService) ac.getBean("uuserService");
+	    uuserService = (UserService) ac.getBean("uuserService");
 	}
 	@Test
 	// @Rollback(false)
 	public void test() {
-		UuserPO user = uuserService.getById(1);
+		UserPO user = uuserService.getById(1);
 		System.err.println(user.toString());
 	}
 }

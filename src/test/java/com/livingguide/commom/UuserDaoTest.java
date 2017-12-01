@@ -8,8 +8,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.livingguide.service.UuserService;
-import com.livingguide.vo.UuserPO;
+import com.livingguide.service.UserService;
+import com.livingguide.vo.UserPO;
 
 @RunWith(SpringJUnit4ClassRunner.class) // 使用Junit4测试
 @ContextConfiguration(locations = { "classpath*:ApplicationContext.xml" }) // 加载配置文件
@@ -21,20 +21,19 @@ public class UuserDaoTest {
 
 	// 使用DAO时放开注释即可
 	@Autowired
-	private UuserService uuserService;
+	private UserService uuserService;
 
 	@Test
 	// @Rollback(false)
 	public void testGetById() {
-		UuserPO user = uuserService.getById(1);
+		UserPO user = uuserService.getById(1);
 		System.err.println(user.toString());
 	}
 
 	@Test
 	@Rollback(false)
 	public void testUpdate() {
-		UuserPO user = uuserService.getById(11);
-		user.setNickname("乐乐");
+		UserPO user = uuserService.getById(11);
 		boolean ok = uuserService.update(user);
 		System.err.println(ok);
 	}

@@ -23,7 +23,7 @@
 	<mvc:annotation-driven ></mvc:annotation-driven>
 
 	<!-- 筛选请求，将静态资源交给servlet处理，非静态资源请求由DispatcherServlet处理 -->
-	<mvc:default-servlet-handler />
+<!-- 	<mvc:default-servlet-handler /> -->
 	<!-- 加载视图静态资源 -->
 	<mvc:resources location="/WEB-INF/static/" mapping="/static/**" />
 
