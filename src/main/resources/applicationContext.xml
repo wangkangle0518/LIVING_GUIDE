@@ -140,6 +140,7 @@
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 
 	<!-- AOP配置,事务切入点 -->
+	<!-- 切入点方法旁边会出现双箭头标记 -->
 	<aop:config>
 		<aop:pointcut expression="execution(* com.livingguide.service.*.*(..))" id="logPointcut"/>
 		<aop:advisor pointcut-ref="logPointcut" advice-ref="txAdvice" />

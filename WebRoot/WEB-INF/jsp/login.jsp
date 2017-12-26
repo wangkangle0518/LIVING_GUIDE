@@ -54,7 +54,7 @@
 							<div id="randiv" style="display:none;margin-left:98px;">
 							
 								验证码：<input id="randomcode" name="randomcode" size="8" />
-<!-- 								<img id="randomcode_img" src="WEB-INF/jsp/exceptionvalidatecode.jsp" alt="" width="56" height="20" align='absMiddle' /> -->
+								<img id="randomcode_img" src="exception/validatecode" alt="" width="56" height="20" align='absMiddle' />
 								<a href=javascript:randomcode_refresh()>刷新</a>
 							</div>
 							<div style="margin-left:98px;">
