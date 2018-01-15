@@ -13,24 +13,18 @@
 	<context:annotation-config />
 
 	<!-- 自动扫描包,支持Controller -->
-	<!-- <context:component-scan base-package="com.livingguide.Controller"/> -->
-	<context:component-scan base-package="com.livingguide"
-		use-default-filters="false">
-		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
-	</context:component-scan>
+	<context:component-scan base-package="com.livingguide.Controller"/>
 
 	<!-- 会自动注册了validator ConversionService，不用重复配置 -->
 	<mvc:annotation-driven ></mvc:annotation-driven>
 
 	<!-- 筛选请求，将静态资源交给servlet处理，非静态资源请求由DispatcherServlet处理 -->
-<!-- 	<mvc:default-servlet-handler /> -->
+	<!-- <mvc:default-servlet-handler /> -->
 	<!-- 加载视图静态资源 -->
 	<mvc:resources location="/WEB-INF/static/" mapping="/static/**" />
 
 	<!-- SpringMVC 3.1之后使用 RequestMappingHandlerAdapter 代替 AnnotationMethodHandlerAdapter -->
-	<!-- <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/> -->
-	<bean
-		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
 		<property name="messageConverters" >
 			<list>
 				<ref bean="MappingJackson2HttpMessageConverter"/>
@@ -39,8 +33,7 @@
 	</bean>
 
 	<!-- 支持返回json(避免IE在ajax请求时，返回json出现下载 ) -->
-	<bean id="MappingJackson2HttpMessageConverter"
-		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+	<bean id="MappingJackson2HttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 		<property name="supportedMediaTypes">
 			<list>
 				<value>application/json;charset=UTF-8</value>
@@ -49,18 +42,15 @@
 	</bean>
 
 	<!-- 配置springMVC处理上传文件的信息 -->
-	<bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="defaultEncoding" value="utf-8" />
 		<property name="maxUploadSize" value="10485760000" />
 		<property name="maxInMemorySize" value="40960" />
 	</bean>
 
 	<!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
-	<bean id="defaultViewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView" />
+	<bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
 		<property name="contentType" value="text/html" />
 		<property name="prefix" value="/WEB-INF/jsp/" />
 		<property name="suffix" value=".jsp" />
