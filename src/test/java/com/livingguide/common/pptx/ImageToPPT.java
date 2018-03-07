@@ -12,7 +12,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.sl.usermodel.PictureData;
 
-public class ImageToPPTX {
+public class ImageToPPT {
 
 	public static void main(String args[]) throws IOException {
 		HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl("slideshow.ppt"));

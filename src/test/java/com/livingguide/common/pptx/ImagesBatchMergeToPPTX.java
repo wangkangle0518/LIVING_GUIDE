@@ -19,15 +19,30 @@ import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
 public class ImagesBatchMergeToPPTX {
-
+	
 	// File representing the folder that you select using a FileChooser
-	static final File dir = new File("C:\\Users\\Lele\\Desktop\\Camera");
+	private File dir;
+	
+	private File file;
 
 	// array of supported extensions (use a List if you prefer)
-	static final String[] EXTENSIONS = new String[] { "jpg", "png", "bmp" };// and other formats you need
+	private static final String[] EXTENSIONS = new String[] { "jpg", "png", "bmp" };// and other formats you need
+	
+	public ImagesBatchMergeToPPTX(String imagesUrl) throws IOException {
+		this.dir = new File(imagesUrl);
+		// make sure it's a directory
+		if (!dir.exists() || !dir.isDirectory()) {
+			throw new IOException("文件夹不存在");
+		}
+		this.file = new File(imagesUrl + "\\" + imagesUrl.substring(imagesUrl.lastIndexOf("\\")) + ".pptx");
+		if (file.exists()) {
+			file.delete();
+		}
+		mergeToPptx();
+	}
 
 	// filter to identify images based on their extensions
-	static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
+	private static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
 
 		// @Override
 		public boolean accept(final File dir, final String name) {
@@ -39,37 +54,38 @@ public class ImagesBatchMergeToPPTX {
 			return (false);
 		}
 	};
-
-	public static void main(String[] args) throws IOException {
-
-		if (dir.isDirectory()) { // make sure it's a directory
-			XMLSlideShow ppt = new XMLSlideShow();
-			File file = new File("C:\\Users\\Lele\\Desktop\\小可心.pptx");
-			FileOutputStream out = new FileOutputStream(file);
-			for (final File f : dir.listFiles(IMAGE_FILTER)) {
-
-				XSLFSlide slide = ppt.createSlide();
-
-				// converting it into a byte array
-				byte[] picture = IOUtils.toByteArray(new FileInputStream(f));
-
-				// adding the image to the presentation
-				PictureData idx = ppt.addPicture(picture, PictureData.PictureType.JPEG);
-
-				// creating a slide with given picture on it
-				XSLFPictureShape pic = slide.createPicture(idx);
-				Iterator readers = ImageIO.getImageReadersByFormatName("jpg");
-				ImageReader reader = (ImageReader) readers.next();
-				ImageInputStream iis = ImageIO.createImageInputStream(f);
-				reader.setInput(iis, true);
-//				ppt.setPageSize(new Dimension(reader.getWidth(0), reader.getHeight(0)));
-				ppt.setPageSize(new Dimension(1920, 1920));
-				System.out.println("============" + f.getName() + "============" + ppt.getPageSize().getWidth() + ";" + ppt.getPageSize().getHeight());
-
-			}
-			ppt.write(out);
-			System.out.println("Presentation created successfully");
+	
+	@SuppressWarnings({ "resource", "unused" })
+	private void mergeToPptx() throws IOException {
+		XMLSlideShow ppt = new XMLSlideShow();
+		FileOutputStream out = new FileOutputStream(this.file);
+		ppt.setPageSize(new Dimension(1920, 1920));
+		for (final File f : dir.listFiles(IMAGE_FILTER)) {
+			XSLFSlide slide = ppt.createSlide();
+			// converting it into a byte array
+			byte[] picture = IOUtils.toByteArray(new FileInputStream(f));
+			
+			// adding the image to the presentation
+			PictureData idx = ppt.addPicture(picture, PictureData.PictureType.JPEG);
+			
+			// creating a slide with given picture on it
+			XSLFPictureShape pic = slide.createPicture(idx);
+			Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("jpg");
+			ImageReader reader = (ImageReader) readers.next();
+			ImageInputStream iis = ImageIO.createImageInputStream(f);
+			reader.setInput(iis, true);
+			
+			System.out.println("====================导入图片"+ f.getName() + "============================");
 		}
-
+		ppt.write(out);
+		System.out.println("========================导入图片完成==============================");
+	}
+	
+	public static void main(String[] args) {
+		try {
+			new ImagesBatchMergeToPPTX("C:\\Users\\Lele\\Desktop\\Camera");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
