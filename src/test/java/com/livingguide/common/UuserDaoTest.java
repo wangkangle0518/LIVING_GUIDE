@@ -1,4 +1,4 @@
-package com.livingguide.commom;
+package com.livingguide.common;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
