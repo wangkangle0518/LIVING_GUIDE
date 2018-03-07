@@ -18,7 +18,7 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
-public class Test {
+public class ImagesBatchMergeToPPTX {
 
 	// File representing the folder that you select using a FileChooser
 	static final File dir = new File("C:\\Users\\Lele\\Desktop\\Camera");

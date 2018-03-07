@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
-public class Test2 {
+public class MergePPTs {
 
 	public static void main(String args[]) throws IOException {
 
