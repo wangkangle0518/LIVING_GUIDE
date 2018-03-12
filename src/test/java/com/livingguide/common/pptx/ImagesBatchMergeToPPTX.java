@@ -59,7 +59,7 @@ public class ImagesBatchMergeToPPTX {
 	private void mergeToPptx() throws IOException {
 		XMLSlideShow ppt = new XMLSlideShow();
 		FileOutputStream out = new FileOutputStream(this.file);
-		ppt.setPageSize(new Dimension(1920, 1920));
+		ppt.setPageSize(new Dimension(1920, 1080));
 		for (final File f : dir.listFiles(IMAGE_FILTER)) {
 			XSLFSlide slide = ppt.createSlide();
 			// converting it into a byte array
@@ -68,7 +68,6 @@ public class ImagesBatchMergeToPPTX {
 			// adding the image to the presentation
 			PictureData idx = ppt.addPicture(picture, PictureData.PictureType.JPEG);
 			
-			// creating a slide with given picture on it
 			XSLFPictureShape pic = slide.createPicture(idx);
 			Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("jpg");
 			ImageReader reader = (ImageReader) readers.next();
@@ -79,6 +78,7 @@ public class ImagesBatchMergeToPPTX {
 		}
 		ppt.write(out);
 		System.out.println("========================导入图片完成==============================");
+		out.close();
 	}
 	
 	public static void main(String[] args) {
