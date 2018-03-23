@@ -58,16 +58,16 @@ public class ImageToPPT {
 		ppt.setPageSize(new Dimension(1920, 1080));
 		File[] fs = dir.listFiles(IMAGE_FILTER);
 		for (File f : fs) {
-			// adding the image to the presentation
+			HSLFSlide slide = ppt.createSlide();
+/*			// adding the image to the presentation
 			HSLFPictureData pd1 = ppt.addPicture(f, PictureData.PictureType.JPEG);
 			// get a new shape
 			HSLFPictureShape pictNew1 = new HSLFPictureShape(pd1);
 			// set the background anchor in the ppt 
 			pictNew1.setAnchor(new java.awt.Rectangle(0, 0, 1920, 1080));
 			// create a new blank slide
-			HSLFSlide slide = ppt.createSlide();
 			// add thd background to the slide
-			slide.addShape(pictNew1);
+			slide.addShape(pictNew1);*/
 			// adding the image to the presentation
 			HSLFPictureData pd = ppt.addPicture(f, PictureData.PictureType.JPEG);
 			// read the picture
@@ -85,11 +85,11 @@ public class ImageToPPT {
 			}
 			// add the picture to the slide
 			slide.addShape(pictNew);
-
 			System.out.println("====================导入图片" + f.getName() + "============================");
 		}
 
 		FileOutputStream out = new FileOutputStream(this.file);
+//		new File("D:\\Camera\\王筝-对你说.mp3");
 		ppt.write(out);
 		System.out.println("========================导入图片完成==============================");
 		out.close();
