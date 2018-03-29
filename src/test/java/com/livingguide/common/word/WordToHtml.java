@@ -50,7 +50,7 @@ public class WordToHtml {
 	}
 
 	public static void main(String argv[]) {
-		String inputFile = "E:\\文档\\资料\\doc\\面试笔试题";
+		String inputFile = "E:\\文档\\资料\\doc";
 		try {
 			new WordToHtml(inputFile);
 		} catch (Exception e) {
@@ -69,7 +69,6 @@ public class WordToHtml {
 
 		int  i = 0;
 		for (final File f : dir.listFiles(IMAGE_FILTER)) {
-			i++;
 			FileInputStream in = new FileInputStream(f);
 			
 			InputStream is = FileMagic.prepareToCheckMagic(in);
@@ -81,6 +80,11 @@ public class WordToHtml {
 //				analysisDocx(fileName);
 			} else {
 				System.out.println("=========== 暂时无法解析 =====" + fm + "=====" + name);
+				i++;
+//				if (f.exists()) {
+//					f.createNewFile();
+//					System.out.println(f.delete());
+//				}
 			}
 		}
 		System.out.println(i);
