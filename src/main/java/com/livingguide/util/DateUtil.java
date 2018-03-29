@@ -16,4 +16,9 @@ public class DateUtil {
 		return null;
 	}
 
+	public static int format(Date date) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

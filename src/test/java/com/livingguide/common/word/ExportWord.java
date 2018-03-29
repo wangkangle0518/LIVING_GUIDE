@@ -101,6 +101,7 @@ public class ExportWord {
 	 * @throws Exception
 	 */
 	public void testWriteTable() throws Exception {
+		@SuppressWarnings("resource")
 		XWPFDocument doc = new XWPFDocument();
 		// 创建一个5行5列的表格
 		XWPFTable table = doc.createTable(5, 5);
