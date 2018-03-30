@@ -90,7 +90,7 @@ public class Commodity {
 	@Override
 	public String toString() {
 		return "条形码：" + getBarCode() + ", 单价：" + getUnitPrice() + ", 数量：" + getNum() + ", 总价：" + getTotal() + ", 名称: "
-				+ name + ";\n";
+				+ getName() + ";\n";
 	}
 
 	public int compareTo(Commodity commodity) {
