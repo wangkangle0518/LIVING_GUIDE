@@ -14,10 +14,20 @@ public class Invoice {
 	 */
 	private List<Commodity> list = new ArrayList<>();
 
+	/**
+	 * 获取商品单
+	 * 
+	 * @return
+	 */
 	public List<Commodity> getList() {
 		return list;
 	}
 
+	/**
+	 * 设置商品单
+	 * 
+	 * @param list
+	 */
 	public void setList(List<Commodity> list) {
 		this.list = list;
 	}

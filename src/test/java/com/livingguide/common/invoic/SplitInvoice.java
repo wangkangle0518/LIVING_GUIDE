@@ -51,7 +51,7 @@ public class SplitInvoice {
 		Invoice invoice = new Invoice();
 		commoditySub = commodityMax;
 		for (int i = 0; i < list.size(); i++) {
-			setAllInvoice(invoice, commoditySub, list, i);
+			setInvoice(invoice, list, i);
 		}
 		invoiceList.add(invoice);
 		List<Map.Entry<String, Commodity>> listTemp = new ArrayList<>();
@@ -64,84 +64,79 @@ public class SplitInvoice {
 			equalsMAX(listTemp, invoiceList);
 		}
 	}
-	
+
 	private String divide(String bd1, String bd2) {
 		return String.valueOf(new BigDecimal(bd1).divide(new BigDecimal(bd2), 0, RoundingMode.DOWN).doubleValue());
 	}
-	
+
 	private String subtract(String bd1, String bd2) {
 		return new BigDecimal(bd1).subtract(new BigDecimal(bd2)).toString();
 	}
 
-	
 	private String multiply(String bd1, String bd2) {
 		return new BigDecimal(bd1).multiply(new BigDecimal(bd2)).toString();
 	}
-	
+
 	/**
-	 * @param invoiceList
-	 * @param bd
+	 * 设置符合条件商品集
+	 * 
+	 * @param invoice
 	 * @param list
 	 * @param i
 	 */
-	private void setInvoice(Invoice invoice, String bd, List<Map.Entry<String, Commodity>> list, int i) {
-		if (i < list.size()) {
-			// 差量 = 差价/单价
-			String dd = divide(bd, list.get(i).getValue().getUnitPrice());
-			int num;
-			if (dd.indexOf(".") > 0) {
-				num = Integer.valueOf(dd.substring(0, dd.indexOf(".")));
-			} else {
-				num = Integer.valueOf(dd);
-			}
-			if (Integer.valueOf(list.get(i).getValue().getNum()) > 0 && num >= 1) {
-				// 当前物品可转移的数量
-				int newNum = Integer.parseInt(list.get(i).getValue().getNum()) - num;
-				// 创建新物品集
-				Commodity cd = new Commodity();
-				if (newNum > 0) {
-					// 转移物品
-					Commodity cdTemp = list.get(i).getValue();
-					cd.setBarCode(cdTemp.getBarCode());
-					cd.setName(cdTemp.getName());
-					cd.setNum(String.valueOf(num));
-					cd.setUnitPrice(cdTemp.getUnitPrice());
-					cd.getTotal();
-					// 加入发票
-					invoice.getList().add(cd);
-					// 原物品集减去相当数量
-					list.get(i).getValue().setNum(String.valueOf(newNum));
-				} else {
-					// 转移物品
-					Commodity cdTemp = list.get(i).getValue();
-					cd.setBarCode(cdTemp.getBarCode());
-					cd.setName(cdTemp.getName());
-					cd.setNum(cdTemp.getNum());
-					cd.setUnitPrice(cdTemp.getUnitPrice());
-					cd.getTotal();
-					// 加入发票
-					invoice.getList().add(cd);
-					// 原物品集减去相当数量
-					list.get(i).getValue().setNum("0");
-				}
-				// 新差价 = 差价-物品*数量
-				commoditySub = subtract(bd, multiply(cd.getUnitPrice(), cd.getNum()));
-			} else {
-				commoditySub = bd;
-			}
-			i++;
-			setAllInvoice(invoice, commoditySub, list, i);
+	private void addCommodity(Invoice invoice, List<Map.Entry<String, Commodity>> list, int i) {
+		// 差量 = 差价/单价
+		String dd = divide(commoditySub, list.get(i).getValue().getUnitPrice());
+		int num;
+		if (dd.indexOf(".") > 0) {
+			num = Integer.valueOf(dd.substring(0, dd.indexOf(".")));
 		} else {
-			commoditySub = bd;
+			num = Integer.valueOf(dd);
 		}
+		int oldNum = Integer.parseInt(list.get(i).getValue().getNum());
+		if (oldNum > 0 && num >= 1) {
+			// 当前物品可转移的数量
+			int newNum = Integer.parseInt(list.get(i).getValue().getNum()) - num;
+			// 创建新物品集
+			Commodity cd = new Commodity();
+			Commodity cdTemp = list.get(i).getValue();
+			// 转移物品
+			cd.setBarCode(cdTemp.getBarCode());
+			cd.setName(cdTemp.getName());
+			cd.setUnitPrice(cdTemp.getUnitPrice());
+			if (newNum > 0) {
+				cd.setNum(String.valueOf(num));
+				// 原物品集减去相当数量
+				list.get(i).getValue().setNum(String.valueOf(newNum));
+			} else {
+				cd.setNum(cdTemp.getNum());
+				// 原物品集减去相当数量
+				list.get(i).getValue().setNum("0");
+			}
+			cd.getTotal();
+			// 加入发票
+			invoice.getList().add(cd);
+			// 新差价 = 差价-物品*数量
+			commoditySub = subtract(commoditySub, multiply(cd.getUnitPrice(), cd.getNum()));
+		}
+		i++;
+		setInvoice(invoice, list, i);
 	}
-	
-	private void setAllInvoice(Invoice invoice, String sub, List<Map.Entry<String, Commodity>> list, int i) {
+
+	/**
+	 * 生成发票单
+	 * 
+	 * @param invoice
+	 * @param list
+	 * @param i
+	 */
+	private void setInvoice(Invoice invoice, List<Map.Entry<String, Commodity>> list, int i) {
 		// 是否还有差量 = 差价-最小单价
-		String min = divide(sub, list.get(list.size() - 1).getValue().getUnitPrice());
-		if (Double.valueOf(min) >= 1) {
-			setInvoice(invoice, sub, list, i);
+		String min = divide(commoditySub, list.get(list.size() - 1).getValue().getUnitPrice());
+		// 如果还有差量，在发票单中添加商品集
+		if (Double.valueOf(min) >= 1 && i < list.size()) {
+			addCommodity(invoice, list, i);
 		}
 	}
-	
+
 }
