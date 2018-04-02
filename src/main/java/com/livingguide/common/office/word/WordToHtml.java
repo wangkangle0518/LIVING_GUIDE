@@ -1,4 +1,4 @@
-package com.livingguide.common.word;
+package com.livingguide.common.office.word;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package com.livingguide.common;
+package com.livingguide.common.utils.zip;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

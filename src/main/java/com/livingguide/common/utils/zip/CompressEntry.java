@@ -1,4 +1,4 @@
-package com.livingguide.common;
+package com.livingguide.common.utils.zip;
 
 import java.io.File;
 import java.io.IOException;

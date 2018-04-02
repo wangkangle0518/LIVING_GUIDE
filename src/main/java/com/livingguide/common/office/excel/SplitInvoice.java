@@ -1,4 +1,4 @@
-package com.livingguide.common.invoic;
+package com.livingguide.common.office.excel;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

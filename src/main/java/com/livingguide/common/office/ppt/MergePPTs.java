@@ -1,4 +1,4 @@
-package com.livingguide.common.pptx;
+package com.livingguide.common.office.ppt;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

@@ -1,4 +1,4 @@
-package com.livingguide.common.pptx;
+package com.livingguide.common.office.ppt;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
