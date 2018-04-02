@@ -35,7 +35,7 @@ public class SplitInvoice {
 		}
 	}
 
-	private List<Map.Entry<String, Commodity>> sort(Map<String, Commodity> map) {
+	public List<Map.Entry<String, Commodity>> sort(Map<String, Commodity> map) {
 		List<Map.Entry<String, Commodity>> list = new ArrayList<Map.Entry<String, Commodity>>(map.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<String, Commodity>>() {
 			// 升序排序
@@ -47,7 +47,7 @@ public class SplitInvoice {
 		return list;
 	}
 
-	private void equalsMAX(List<Map.Entry<String, Commodity>> list, List<Invoice> invoiceList) {
+	public void equalsMAX(List<Map.Entry<String, Commodity>> list, List<Invoice> invoiceList) {
 		Invoice invoice = new Invoice();
 		commoditySub = commodityMax;
 		for (int i = 0; i < list.size(); i++) {
@@ -93,10 +93,10 @@ public class SplitInvoice {
 		} else {
 			num = Integer.valueOf(dd);
 		}
-		int oldNum = Integer.parseInt(list.get(i).getValue().getNum());
+		double oldNum = Double.parseDouble(list.get(i).getValue().getNum());
 		if (oldNum > 0 && num >= 1) {
 			// 当前物品可转移的数量
-			int newNum = Integer.parseInt(list.get(i).getValue().getNum()) - num;
+			double newNum = Double.parseDouble(list.get(i).getValue().getNum()) - num;
 			// 创建新物品集
 			Commodity cd = new Commodity();
 			Commodity cdTemp = list.get(i).getValue();

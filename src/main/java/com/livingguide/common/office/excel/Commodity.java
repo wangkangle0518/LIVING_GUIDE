@@ -107,6 +107,8 @@ public class Commodity {
 	 */
 	public void setTotal(String total) {
 		this.total = total;
+		this.unitPrice = new BigDecimal(this.total).divide(new BigDecimal(this.num), 4, RoundingMode.HALF_UP)
+				.toString();
 	}
 
 	/**
@@ -158,9 +160,9 @@ public class Commodity {
 	 * @return
 	 */
 	public int compareTo(Commodity commodity) {
-		if (Double.parseDouble(this.unitPrice) == Double.parseDouble(commodity.getUnitPrice())) {
+		if (Double.parseDouble(this.getTotal()) == Double.parseDouble(commodity.getTotal())) {
 			return 0;
-		} else if (Double.parseDouble(this.unitPrice) > Double.parseDouble(commodity.getUnitPrice())) {
+		} else if (Double.parseDouble(this.getTotal()) > Double.parseDouble(commodity.getTotal())) {
 			return -1;
 		}
 		return 1;
