@@ -15,15 +15,15 @@ public class Commodity {
 	/**
 	 * 总价
 	 */
-	private String total;
+	private String total = "0";
 	/**
 	 * 数量
 	 */
-	private String num;
+	private String num = "0";
 	/**
 	 * 单价
 	 */
-	private String unitPrice;
+	private String unitPrice = "0";
 	/**
 	 * 商品名
 	 */
@@ -93,9 +93,6 @@ public class Commodity {
 	 * @return
 	 */
 	public String getTotal() {
-		if (this.num.equals("0")) {
-			return "0";
-		}
 		this.total = new BigDecimal(this.num).multiply(new BigDecimal(this.unitPrice)).toString();
 		return this.total;
 	}
