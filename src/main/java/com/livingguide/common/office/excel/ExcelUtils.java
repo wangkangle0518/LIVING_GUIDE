@@ -16,6 +16,9 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -48,13 +51,12 @@ public class ExcelUtils {
 
 	public static void main(String[] args) {
 		try {
-			String filepath = "C:\\Users\\Lele\\Desktop\\20180329数据拆分.xlsx";
+			String filepath = "C:\\Users\\乐乐\\Desktop\\20180329数据拆分.xlsx";
 			ExcelUtils eu = new ExcelUtils(filepath);
 			Map<String, Commodity> map = eu.analysisExcel();
 			SplitInvoice si = new SplitInvoice();
-			List<Map.Entry<String, Commodity>> list = si.sort(map);
 			List<Invoice> invoiceList = new ArrayList<>();
-			si.equalsMAX(list, invoiceList);
+			si.equalsMAX(map, invoiceList);
 			eu.ecportExcel(invoiceList);
 		} catch (FileNotFoundException e) {
 			System.out.println("未找到指定路径的文件!");
@@ -123,27 +125,25 @@ public class ExcelUtils {
 		// sheet.setDefaultRowHeightInPoints(10);
 		// 设置指定列的列宽，256 * 50这种写法是因为width参数单位是单个字符的256分之一
 		sheet.setColumnWidth(0, 256 * 15);
-		sheet.setColumnWidth(1, 256 * 10);
-		sheet.setColumnWidth(2, 256 * 10);
-		sheet.setColumnWidth(3, 256 * 10);
-		sheet.setColumnWidth(4, 256 * 50);
-		int i = 0;
-		Row row = sheet.createRow(i);
+		sheet.setColumnWidth(1, 256 * 15);
+		sheet.setColumnWidth(2, 256 * 15);
+		sheet.setColumnWidth(3, 256 * 15);
+		sheet.setColumnWidth(4, 256 * 55);
+		Row row = sheet.createRow(0);
 		row.createCell(0).setCellValue("条形码");
 		row.createCell(1).setCellValue("数量");
 		row.createCell(2).setCellValue("单价");
 		row.createCell(3).setCellValue("总价");
 		row.createCell(4).setCellValue("商品名");
-		i++;
+		int i = 1;
+		BigDecimal bg;
 		for (Invoice invoice : invoiceList) {
 			List<Commodity> commodityList = invoice.getList();
-			i++;
-			Row rowi = sheet.createRow(i);
+			Row rowi = sheet.createRow(++i);
 			rowi.createCell(0).setCellValue("发票清单：");
-			BigDecimal bg = new BigDecimal("0");
+			bg = new BigDecimal("0");
 			for (Commodity commodity : commodityList) {
-				i++;
-				Row rows = sheet.createRow(i);
+				Row rows = sheet.createRow(++i);
 				rows.createCell(0).setCellValue(commodity.getBarCode());
 				rows.createCell(1).setCellValue(Double.parseDouble(commodity.getNum()));
 				rows.createCell(2).setCellValue(Double.parseDouble(commodity.getUnitPrice()));
@@ -151,14 +151,21 @@ public class ExcelUtils {
 				rows.createCell(4).setCellValue(commodity.getName());
 				bg = bg.add(new BigDecimal(commodity.getTotal()));
 			}
-			i++;
-			Row rows = sheet.createRow(i);
+			Row rows = sheet.createRow(++i);
 			rows.createCell(0).setCellValue("发票总值：");
-			rows.createCell(1).setCellValue(bg.doubleValue());
+			Cell cell = rows.createCell(3);
+		    CellStyle style = workbook.createCellStyle();
+		    //设置背景颜色
+		    style.setFillPattern(FillPatternType.FINE_DOTS);
+		    style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());  
+		    cell.setCellValue(bg.doubleValue());
+		    cell.setCellStyle(style);
 			i++;
+			bg = null;
 		}
 		OutputStream os = new FileOutputStream(url);
 		workbook.write(os);
 		os.close();
+		workbook.close();
 	}
 }

@@ -46,9 +46,9 @@ public class Commodity {
 		this.barCode = barCode;
 		this.total = total;
 		this.num = num;
+		this.name = name;
 		this.unitPrice = new BigDecimal(this.total).divide(new BigDecimal(this.num), 4, RoundingMode.HALF_UP)
 				.toString();
-		this.name = name;
 	}
 
 	/**
