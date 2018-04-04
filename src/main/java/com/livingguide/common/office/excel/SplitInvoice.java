@@ -90,10 +90,12 @@ public class SplitInvoice {
 			// 原物品集减去相当数量
 			if (newNum > 0) {
 				commodity.setNum(String.valueOf(num));
-				list.get(i).getValue().setNum(String.valueOf(newNum));
+//				list.get(i).getValue().setNum(String.valueOf(newNum));
+				commodityTemp.setNum(String.valueOf(newNum));
 			} else {
 				commodity.setNum(commodityTemp.getNum());
-				list.get(i).getValue().setNum("0");
+//				list.get(i).getValue().setNum("0");
+				commodityTemp.setNum("0");
 			}
 			commodity.getTotal();
 			// 加入发票

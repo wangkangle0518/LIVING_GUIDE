@@ -1,8 +1,11 @@
 package com.livingguide.common.office.excel;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,12 +31,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * 读取Excel
  */
 public class ExcelUtils {
+
 	private Workbook workbook;
 	private InputStream is;
 	private String regExDoule = "^\\-?[0-9]+\\.?[0-9]*$";
 	private String url;
+	private static final String[] EXTENSIONS = new String[] { "xls", "xlsx", "bmp" };
 
-	public ExcelUtils(String url) {
+	public ExcelUtils(String url) throws IOException {
 		String ext = url.substring(url.lastIndexOf("."));
 		try {
 			is = new FileInputStream(url);
@@ -49,20 +54,55 @@ public class ExcelUtils {
 		}
 	}
 
+	// filter to identify images based on their extensions
+	private static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
+
+		// @Override
+		public boolean accept(final File dir, final String name) {
+			for (final String ext : EXTENSIONS) {
+				if (name.endsWith("." + ext)) {
+					return (true);
+				}
+			}
+			return (false);
+		}
+	};
+
 	public static void main(String[] args) {
 		try {
-			String filepath = "C:\\Users\\乐乐\\Desktop\\20180329数据拆分.xlsx";
-			ExcelUtils eu = new ExcelUtils(filepath);
-			Map<String, Commodity> map = eu.analysisExcel();
-			SplitInvoice si = new SplitInvoice();
-			List<Invoice> invoiceList = new ArrayList<>();
-			si.equalsMAX(map, invoiceList);
-			eu.ecportExcel(invoiceList);
-		} catch (FileNotFoundException e) {
-			System.out.println("未找到指定路径的文件!");
-			e.printStackTrace();
+			String filepath = "D:\\商品分析";
+			File file = new File(filepath);
+			// make sure it's a directory
+			if (file.exists() && !file.isDirectory()) {
+				file.delete();
+				throw new IOException("文件夹不存在");
+			}
+			if (!file.exists() || !file.isDirectory()) {
+				file.mkdirs();
+				throw new IOException("文件夹不存在");
+			}
+			for (File f : file.listFiles(IMAGE_FILTER)) {
+				ExcelUtils eu = new ExcelUtils(f.getPath());
+				Map<String, Commodity> map = eu.analysisExcel();
+				SplitInvoice si = new SplitInvoice();
+				List<Invoice> invoiceList = new ArrayList<>();
+				si.equalsMAX(map, invoiceList);
+				eu.ecportExcel(invoiceList);
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				File file = new File("D:\\商品分析\\异常记录.txt");
+				if (file.exists()) {
+					file.delete();
+				}
+				if (file.createNewFile()) {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+					bw.write("异常信息：" + e.toString());
+					bw.close();
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -154,12 +194,12 @@ public class ExcelUtils {
 			Row rows = sheet.createRow(++i);
 			rows.createCell(0).setCellValue("发票总值：");
 			Cell cell = rows.createCell(3);
-		    CellStyle style = workbook.createCellStyle();
-		    //设置背景颜色
-		    style.setFillPattern(FillPatternType.FINE_DOTS);
-		    style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());  
-		    cell.setCellValue(bg.doubleValue());
-		    cell.setCellStyle(style);
+			CellStyle style = workbook.createCellStyle();
+			// 设置背景颜色
+			style.setFillPattern(FillPatternType.FINE_DOTS);
+			style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+			cell.setCellValue(bg.doubleValue());
+			cell.setCellStyle(style);
 			i++;
 			bg = null;
 		}
