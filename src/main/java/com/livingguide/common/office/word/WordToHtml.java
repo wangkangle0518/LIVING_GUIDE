@@ -21,8 +21,6 @@ public class WordToHtml {
 
 	private File dir;
 
-	private File file;
-
 	private static final String[] EXTENSIONS = new String[] { "doc", "docx" };// and other formats you need
 
 	private static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
@@ -43,15 +41,11 @@ public class WordToHtml {
 		if (!dir.exists() || !dir.isDirectory()) {
 			throw new IOException("文件夹不存在");
 		}
-		this.file = new File(inputDir + "\\" + inputDir.substring(inputDir.lastIndexOf("\\")) + ".pptx");
-		if (file.exists()) {
-			file.delete();
-		}
 		getWordAndStyle();
 	}
 
 	public static void main(String argv[]) {
-		String inputFile = "E:\\文档\\资料\\doc\\已处理";
+		String inputFile = "E:\\文档\\资料\\doc";
 		try {
 			new WordToHtml(inputFile);
 		} catch (Exception e) {
@@ -61,34 +55,33 @@ public class WordToHtml {
 
 	private void getWordAndStyle() throws Exception {
 
-		int i = 0;
 		for (final File f : dir.listFiles(IMAGE_FILTER)) {
 			FileInputStream in = new FileInputStream(f);
 
 			InputStream is = FileMagic.prepareToCheckMagic(in);
 			FileMagic fm = FileMagic.valueOf(is);
 			String name = f.getName();
+			String path = f.getPath();
+			System.out.println(path);
 			if (fm == FileMagic.OLE2 && name.substring(name.length() - 3).equalsIgnoreCase("doc")) {
-				analysisDoc(f.getPath());
+				analysisDoc(path);
 			} else if (fm == FileMagic.OOXML && name.substring(name.length() - 4).equalsIgnoreCase("docx")) {
-				analysisDocx(f.getPath());
+				analysisDocx(path);
 			} else {
 				System.out.println("=========== 暂时无法解析 =====" + fm + "=====" + name);
-				i++;
 				if (f.exists()) {
 					f.createNewFile();
 					System.out.println(f.delete());
 				}
 			}
+			break;
 		}
-		System.out.println(i);
 	}
 
 	private Map<String, Questions> analysisDoc(String fileName) throws IOException {
 		System.out.println(fileName);
 		FileInputStream in = new FileInputStream(new File(fileName));
 
-		@SuppressWarnings("resource")
 		HWPFDocument doc = new HWPFDocument(in);
 		Range range = doc.getRange();
 		int num = range.numParagraphs();
@@ -104,9 +97,10 @@ public class WordToHtml {
 				continue;
 			}
 			if (para.getCharacterRun(0).isBold()) {
-				if (question == null || question.length() == 0) {
+				if (StringUtils.isBlank(question) || StringUtils.isBlank(answer)) {
 					question = tempStr;
 					tempStr = "";
+					analysis = "";
 					continue;
 				}
 				if (question != tempStr) {
@@ -126,6 +120,7 @@ public class WordToHtml {
 				continue;
 			}
 		}
+		doc.close();
 		if (in != null) {
 			try {
 				in.close();
@@ -141,7 +136,6 @@ public class WordToHtml {
 
 	private Map<String, Questions> analysisDocx(String fileName) throws Exception {
 		FileInputStream in = new FileInputStream(new File(fileName));
-		@SuppressWarnings("resource")
 		XWPFDocument doc = new XWPFDocument(in);
 		List<XWPFParagraph> paras = doc.getParagraphs();
 		String question = "";
@@ -158,9 +152,10 @@ public class WordToHtml {
 				continue;
 			}
 			if (para.getRuns().get(0).isBold()) {
-				if (question == null || question.length() == 0) {
+				if (StringUtils.isBlank(question) || StringUtils.isBlank(answer)) {
 					question = tempStr;
 					tempStr = "";
+					analysis = "";
 					continue;
 				}
 				if (question != tempStr) {
@@ -180,6 +175,7 @@ public class WordToHtml {
 				continue;
 			}
 		}
+		doc.close();
 		if (in != null) {
 			try {
 				in.close();
