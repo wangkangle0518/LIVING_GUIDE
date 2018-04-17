@@ -27,10 +27,6 @@ public class AnalysisWord {
 	
 	private FileInputStream in;
 	
-	private int count;
-	
-	private int max;
-	
 	private static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
 		// @Override
 		public boolean accept(final File dir, final String name) {
@@ -49,26 +45,9 @@ public class AnalysisWord {
 		if (!dir.exists() || !dir.isDirectory()) {
 			throw new IOException("文件夹不存在");
 		}
-		getWordAndStyle();
-		for (String str : map.keySet()) {
-			System.out.println("==============================================================================================================");
-			System.out.println(map.get(str).toString());
-			System.out.println("==============================================================================================================");
-		}
-		System.out.println("==============================================" + max + "==============================================");
-		System.out.println("==============================================" + count + "==============================================");
 	}
 
-	public static void main(String argv[]) {
-		String inputFile = "E:\\文档\\资料\\doc\\已处理";
-		try {
-			new AnalysisWord(inputFile);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void getWordAndStyle() throws Exception {
+	public Map<String, Questions> getWordMap() throws Exception {
 
 		for (File f : dir.listFiles(IMAGE_FILTER)) {
 			in = new FileInputStream(f);
@@ -86,6 +65,8 @@ public class AnalysisWord {
 			}
 			in.close();
 		}
+		
+		return map;
 	}
 
 	private void analysisDoc(String fileName) throws Exception {
@@ -103,14 +84,10 @@ public class AnalysisWord {
 			}
 			if (para.getCharacterRun(0).isBold()) {
 				getQuestions(question, tempStr);
-				count++;
 			} else if (para.getCharacterRun(0).isItalic()) {
 				question[2] = getTemp(question[2], tempStr);
 			} else {
 				question[1] = getTemp(question[1], tempStr);
-				if (max < question[1].length()) {
-					max = question[1].length();
-				}
 			}
 		}
 		doc.close();
@@ -133,14 +110,10 @@ public class AnalysisWord {
 			}
 			if (para.getRuns().get(0).isBold()) {
 				getQuestions(question, tempStr);
-				count++;
 			} else if (para.getRuns().get(0).isItalic()) {
 				question[2] = getTemp(question[2], tempStr);
 			} else {
 				question[1] = getTemp(question[1], tempStr);
-				if (max < question[1].length()) {
-					max = question[1].length();
-				}
 			}
 		}
 		doc.close();
@@ -149,7 +122,7 @@ public class AnalysisWord {
 	
 	private String getTemp(String question, String tempStr) {
 		if (question.length() > 0) {
-			return question + "\n" + tempStr;
+			return question + "\r\n" + tempStr;
 		} 
 		return tempStr;
 	}

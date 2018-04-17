@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 public class Questions {
 	private final String split1 = "、";
 	private final String split2 = ".";
+	private final String split3 = "、";
 
 	public Questions() {
 		super();
@@ -32,6 +33,9 @@ public class Questions {
 		}
 		if (this.question.indexOf(split2) > 0) {
 			this.question = split(this.question, split2);
+		}
+		if (this.question.indexOf(split3) > 0) {
+			this.question = split(this.question, split3);
 		}
 		if (this.question.indexOf(" ") > 0) {
 			this.question = this.question.replaceAll(" ", "");

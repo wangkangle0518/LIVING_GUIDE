@@ -44,26 +44,16 @@ public class ExportWord {
 	 * 
 	 * @param numId
 	 */
-	public void createNewParagraph(String numId) {
+	public void createNewParagraph(int numId) {
 		XWPFParagraph paragraph = document.createParagraph();
 		// 左对齐
 		paragraph.setAlignment(ParagraphAlignment.LEFT);
-		if (numId != null && numId.length() > 0) {
-			paragraph.setNumID(new BigInteger(numId));
+		// TODO
+		if (numId >= 0) {
+			paragraph.setNumID(new BigInteger(numId+""));
 		}
 		// 运行段落
 		run = paragraph.createRun();
-	}
-
-	/**
-	 * 关闭资源
-	 * 
-	 * @throws IOException
-	 */
-	public void close() throws IOException {
-		document.write(out);
-		out.close();
-		System.out.println("word written successully");
 	}
 
 	/**
@@ -92,7 +82,14 @@ public class ExportWord {
 		// * run.setItalic(true);
 	}
 
-	public static void main(String[] args) throws Exception {
+	/**
+	 * 关闭资源
+	 * 
+	 * @throws IOException
+	 */
+	public void close() throws IOException {
+		document.write(out);
+		out.close();
 	}
 
 	/***
@@ -100,6 +97,7 @@ public class ExportWord {
 	 * 
 	 * @throws Exception
 	 */
+	@Deprecated
 	public void testWriteTable() throws Exception {
 		@SuppressWarnings("resource")
 		XWPFDocument doc = new XWPFDocument();
@@ -150,18 +148,9 @@ public class ExportWord {
 			}
 		}
 		// 文件不存在时会自动创建
-		OutputStream os = new FileOutputStream("D:\\table.docx");
+		OutputStream os = new FileOutputStream("D:\\面试题总集.docx");
 		// 写入文件
 		doc.write(os);
-		this.close(os);
-	}
-
-	/**
-	 * 关闭输出流
-	 * 
-	 * @param os
-	 */
-	private void close(OutputStream os) {
 		if (os != null) {
 			try {
 				os.close();
