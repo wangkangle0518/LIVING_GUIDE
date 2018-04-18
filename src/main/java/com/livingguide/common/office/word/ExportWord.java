@@ -41,17 +41,11 @@ public class ExportWord {
 
 	/**
 	 * 创建新段落
-	 * 
-	 * @param numId
 	 */
-	public void createNewParagraph(int numId) {
+	public void createNewParagraph() {
 		XWPFParagraph paragraph = document.createParagraph();
 		// 左对齐
 		paragraph.setAlignment(ParagraphAlignment.LEFT);
-		// TODO
-		if (numId >= 0) {
-			paragraph.setNumID(new BigInteger(numId+""));
-		}
 		// 运行段落
 		run = paragraph.createRun();
 	}
@@ -68,14 +62,14 @@ public class ExportWord {
 	 * @param textPosition
 	 *            字体位置
 	 */
-	public void addText(String text, boolean isBold, int fontSize, int textPosition) {
+	public void addText(String text, boolean isBold, int fontSize) {
 		run.setText(text);
 		// 是否加粗
 		run.setBold(isBold);
 		run.setFontFamily("宋体");
 		// 字体大小
 		run.setFontSize(fontSize);
-		run.setTextPosition(textPosition);
+		run.setTextPosition(0);
 		// * 字体颜色
 		// run.setColor("");
 		// * 斜体

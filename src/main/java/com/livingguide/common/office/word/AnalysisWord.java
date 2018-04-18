@@ -56,6 +56,7 @@ public class AnalysisWord {
 			FileMagic fm = FileMagic.valueOf(is);
 			String path = f.getPath();
 			System.out.println(path);
+//			map.put(path, new Questions(path, path, ""));
 			if (fm == FileMagic.OLE2 && path.substring(path.length() - 3).equalsIgnoreCase("doc")) {
 				analysisDoc(path);
 			} else if (fm == FileMagic.OOXML && path.substring(path.length() - 4).equalsIgnoreCase("docx")) {
@@ -85,9 +86,9 @@ public class AnalysisWord {
 			if (para.getCharacterRun(0).isBold()) {
 				getQuestions(question, tempStr);
 			} else if (para.getCharacterRun(0).isItalic()) {
-				question[2] = getTemp(question[2], tempStr);
+				question[2] = getTemp(question, 2, tempStr);
 			} else {
-				question[1] = getTemp(question[1], tempStr);
+				question[1] = getTemp(question, 1, tempStr);
 			}
 		}
 		doc.close();
@@ -111,30 +112,32 @@ public class AnalysisWord {
 			if (para.getRuns().get(0).isBold()) {
 				getQuestions(question, tempStr);
 			} else if (para.getRuns().get(0).isItalic()) {
-				question[2] = getTemp(question[2], tempStr);
+				question[2] = getTemp(question, 2, tempStr);
 			} else {
-				question[1] = getTemp(question[1], tempStr);
+				question[1] = getTemp(question, 1, tempStr);
 			}
 		}
 		doc.close();
 		close();
 	}
 	
-	private String getTemp(String question, String tempStr) {
-		if (question.length() > 0) {
-			return question + "\r\n" + tempStr;
+	private String getTemp(String[] question, int i, String tempStr) {
+		if (question[0].length() > 0 && question[i].length() > 0) {
+			return question[i] + "\r\n" + tempStr;
 		} 
 		return tempStr;
 	}
 
 	private void getQuestions(String[] question, String tempStr) throws Exception {
-		if (StringUtils.isBlank(question[0]) || StringUtils.isBlank(question[1])) {
+		if (StringUtils.isBlank(question[0])) {
 			question[0] = tempStr;
 			question[2] = "";
 		}
 		if (question[0] != tempStr) {
-			Questions questions = new Questions(question[0], question[1], question[2]);
-			map.put(question[0], questions);
+			if (!StringUtils.isBlank(question[1])) {
+				Questions questions = new Questions(question[0], question[1], question[2]);
+				map.put(questions.getQuestionIsNoInterpunction(), questions);
+			}
 			question[0] = tempStr;
 			question[1] = "";
 			question[2] = "";

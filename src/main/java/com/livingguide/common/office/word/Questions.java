@@ -5,43 +5,39 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 public class Questions {
-	private final String split1 = "、";
-	private final String split2 = ".";
-	private final String split3 = "、";
-
 	public Questions() {
 		super();
 	}
 
-	public String split(String question, String split) {
-		String str = question.substring(0, question.indexOf(split));
-        Pattern pattern = Pattern.compile("^[0-9]*$");  
-        if (pattern.matcher(str).matches()) {
-			question = question.substring(question.indexOf(split) + 1);
+	public String split(String question) {
+		String[] temp = question.split("[\\pP‘’“”]");
+		Pattern pattern = Pattern.compile("^[0-9]*$");
+		int k = 0;
+		int i = temp.length;
+		for (int j = 0; j < i; j++) {
+			if (!pattern.matcher(temp[j].trim()).matches()) {
+				break;
+			}
+			k += temp[j].length() + 1;
 		}
-        return question;
+        return question.substring(k).trim();
 	}
 	
 	public Questions(String question, String answer, String analysis) throws Exception {
 		super();
-		if (StringUtils.isBlank(question)) {
-			throw new Exception("问题不能为空");
-		}
-		this.question = question;
-		if (this.question.indexOf(split1) > 0) {
-			this.question = split(this.question, split1);
-		}
-		if (this.question.indexOf(split2) > 0) {
-			this.question = split(this.question, split2);
-		}
-		if (this.question.indexOf(split3) > 0) {
-			this.question = split(this.question, split3);
-		}
-		if (this.question.indexOf(" ") > 0) {
-			this.question = this.question.replaceAll(" ", "");
-		}
 		this.answer = answer;
 		this.analysis = analysis;
+		
+		this.question = replaceAll(question, "  ", "");
+		this.question = replaceAll(question, "\t", "");
+		this.question = split(this.question);
+	}
+	
+	private String replaceAll(String str, String regex, String replacement) {
+		if (str.indexOf(regex) > 0) {
+			return str.replaceAll(regex, replacement);
+		}
+		return str;
 	}
 
 	/**
@@ -61,6 +57,10 @@ public class Questions {
 
 	public String getQuestion() {
 		return question;
+	}
+	
+	public String getQuestionIsNoInterpunction() {
+		return question.replaceAll(" |[\\pP‘’“”]", "");
 	}
 
 	public void setQuestion(String question) {

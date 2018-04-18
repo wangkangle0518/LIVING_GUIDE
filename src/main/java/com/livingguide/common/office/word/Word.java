@@ -11,17 +11,20 @@ public class Word {
 			Map<String, Questions> map = analysisWord.getWordMap();
 			int i = 0;
 			int j = 0;
-			int k = 0;
-			ExportWord exportWord = new ExportWord("面试题总集" + ++j);
+			ExportWord exportWord = new ExportWord("面试题总集" + ++i);
 			for (String str : map.keySet()) {
-				exportWord.createNewParagraph(++i);
-				exportWord.addText(map.get(str).getQuestion(), true, 14, 0);
-				exportWord.createNewParagraph(++i);
-				exportWord.addText(map.get(str).getAnswer(), false, 12, 0);
-				k++;
-				if (k % 1000 == 0) {
+				exportWord.createNewParagraph();
+				exportWord.addText(map.get(str).getQuestion(), true, 14);
+				String answers = map.get(str).getAnswer();
+				for (String answer : answers.split("\r\n")) {
+					exportWord.createNewParagraph();
+					exportWord.addText(answer, false, 12);
+				}
+				j++;
+				if (j % 1500 == 0) {
+					System.out.println("=====================================k=" + j + "=============================================");
 					exportWord.close();
-					exportWord = new ExportWord("面试题总集" + ++j);
+					exportWord = new ExportWord("面试题总集" + ++i);
 				}
 			}
 			exportWord.close();
