@@ -5,7 +5,7 @@ import java.util.Map;
 public class Word {
 
 	public static void main(String[] args) throws Exception {
-		String inputFile = "E:\\文档\\资料\\doc\\已处理";
+		String inputFile = "E:\\文档\\资料\\doc\\新建文件夹";
 		try {
 			AnalysisWord analysisWord = new AnalysisWord(inputFile);
 			Map<String, Questions> map = analysisWord.getWordMap();
@@ -21,7 +21,7 @@ public class Word {
 					exportWord.addText(answer, false, 12);
 				}
 				j++;
-				if (j % 1500 == 0) {
+				if (j % 2000 == 0) {
 					System.out.println("=====================================k=" + j + "=============================================");
 					exportWord.close();
 					exportWord = new ExportWord("面试题总集" + ++i);

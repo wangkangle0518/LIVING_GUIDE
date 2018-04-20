@@ -10,7 +10,7 @@ public class Questions {
 	}
 
 	public String split(String question) {
-		String[] temp = question.split("[\\pP‘’“”]");
+		String[] temp = question.split("[\\pP‘’“”]| ");
 		Pattern pattern = Pattern.compile("^[0-9]*$");
 		int k = 0;
 		int i = temp.length;

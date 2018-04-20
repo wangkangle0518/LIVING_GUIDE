@@ -5,9 +5,10 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -23,7 +24,13 @@ public class AnalysisWord {
 
 	private static final String[] EXTENSIONS = new String[] { "doc", "docx" };
 	
-	private static Map<String, Questions> map = new LinkedHashMap<String, Questions>();
+	private static Map<String, Questions> map = new TreeMap<String, Questions>(new Comparator<String>() {
+
+		@Override
+		public int compare(String str1, String str2) {
+			return str1.compareToIgnoreCase(str2);
+		}
+	});
 	
 	private FileInputStream in;
 	
