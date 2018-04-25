@@ -29,6 +29,11 @@ public class Commodity {
 	 */
 	private String name;
 
+	/**
+	 * 税率
+	 */
+	private String cess;
+
 	public Commodity() {
 		super();
 	}
@@ -41,12 +46,13 @@ public class Commodity {
 	 * @param num
 	 * @param name
 	 */
-	public Commodity(String barCode, String total, String num, String name) {
+	public Commodity(String barCode, String total, String num, String name, String cess) {
 		super();
 		this.barCode = barCode;
 		this.total = total;
 		this.num = num;
 		this.name = name;
+		this.cess = cess;
 		this.unitPrice = new BigDecimal(this.total).divide(new BigDecimal(this.num), 4, RoundingMode.HALF_UP)
 				.toString();
 	}
@@ -133,6 +139,24 @@ public class Commodity {
 	 */
 	public String getUnitPrice() {
 		return unitPrice;
+	}
+
+	/**
+	 * 获取税率
+	 * 
+	 * @return
+	 */
+	public String getCess() {
+		return cess;
+	}
+
+	/**
+	 * 设置税率
+	 * 
+	 * @param cess
+	 */
+	public void setCess(String cess) {
+		this.cess = cess;
 	}
 
 	/**

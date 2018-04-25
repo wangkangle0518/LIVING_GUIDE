@@ -2,45 +2,43 @@ package com.livingguide.common.office.excel;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class SplitInvoice {
 	private static String commodityMax = "117000";
 	private static String commoditySub;
 
-	private List<Map.Entry<String, Commodity>> sort(Map<String, Commodity> map) {
-		List<Map.Entry<String, Commodity>> list = new ArrayList<Map.Entry<String, Commodity>>(map.entrySet());
-		Collections.sort(list, new Comparator<Map.Entry<String, Commodity>>() {
+	private void sort(Invoice invoice) {
+		Collections.sort(invoice.getList(), new Comparator<Commodity>() {
 			// 排序
-			public int compare(Entry<String, Commodity> o1, Entry<String, Commodity> o2) {
-				return o1.getValue().compareTo(o2.getValue());
+			public int compare(Commodity o1, Commodity o2) {
+				return o1.compareTo(o2);
 			}
 
 		});
-		return list;
 	}
 
-	public void equalsMAX(Map<String, Commodity> cdMap, List<Invoice> invoiceList) {
-		List<Map.Entry<String, Commodity>> list = sort(cdMap);
-		Invoice invoice = new Invoice();
+	public void equalsMAX(Invoice invoice, List<Invoice> invoiceList) {
+		sort(invoice);
+		Invoice ic = new Invoice();
 		commoditySub = commodityMax;
-		setInvoice(invoice, list, 0);
-		invoiceList.add(invoice);
-		Map<String, Commodity> mapTemp = new HashMap<>();
-		for (Entry<String, Commodity> map : list) {
-			Commodity commodity = map.getValue();
-			if (!map.getValue().getNum().equals("0")) {
-				mapTemp.put(commodity.getBarCode(), commodity);
+		setInvoice(ic, invoice, 0);
+		if (ic.getList().size() > 0) {
+			invoiceList.add(ic);
+		}
+		Invoice invoiceTemp = new Invoice();
+		if (invoice.getList().size() == 0) {
+			return;
+		}
+		for (Commodity commodity : invoice.getList()) {
+			if (!commodity.getNum().equals("0")) {
+				invoiceTemp.getList().add(commodity);
 			}
 		}
-		if (mapTemp.size() > 0) {
-			equalsMAX(mapTemp, invoiceList);
+		if (invoice.getList().size() > 0) {
+			equalsMAX(invoiceTemp, invoiceList);
 		}
 	}
 
@@ -51,20 +49,20 @@ public class SplitInvoice {
 	 * @param list
 	 * @param i
 	 */
-	private void setInvoice(Invoice invoice, List<Map.Entry<String, Commodity>> list, int i) {
+	private void setInvoice(Invoice invoice, Invoice invoice2, int i) {
 		// 是否还有差量 = 差价-最小单价
-		if (i < list.size()) {
+		if (i < invoice2.getList().size()) {
 			// 差量 = 差价/单价
-			String cs = divide(commoditySub, list.get(i).getValue().getUnitPrice());
+			String cs = divide(commoditySub, invoice2.getList().get(i).getUnitPrice());
 			if (cs.length() > 1 && cs.indexOf(".") > 0) {
 				cs = cs.substring(0, cs.indexOf("."));
 			}
 			int num = Integer.valueOf(cs);
 			// 如果还有差量，在发票单中添加商品集
 			if (num >= 1) {
-				addCommodity(invoice, list, num, i);
+				addCommodity(invoice, invoice2, num, i);
 			}
-			setInvoice(invoice, list, ++i);
+			setInvoice(invoice, invoice2, ++i);
 		}
 	}
 
@@ -75,17 +73,18 @@ public class SplitInvoice {
 	 * @param list
 	 * @param i
 	 */
-	private void addCommodity(Invoice invoice, List<Map.Entry<String, Commodity>> list, int num, int i) {
-		int oldNum = (int) Double.parseDouble(list.get(i).getValue().getNum());
+	private void addCommodity(Invoice invoice, Invoice invoice2, int num, int i) {
+		int oldNum = (int) Double.parseDouble(invoice2.getList().get(i).getNum());
 		if (oldNum > 0 && num >= 1) {
 			// 当前物品可转移的数量
 			// 创建新物品集
 			Commodity commodity = new Commodity();
-			Commodity commodityTemp = list.get(i).getValue();
+			Commodity commodityTemp = invoice2.getList().get(i);
 			// 转移物品
 			commodity.setBarCode(commodityTemp.getBarCode());
 			commodity.setName(commodityTemp.getName());
 			commodity.setUnitPrice(commodityTemp.getUnitPrice());
+			commodity.setCess(commodityTemp.getCess());
 			int newNum = oldNum - num;
 			// 原物品集减去相当数量
 			if (newNum > 0) {

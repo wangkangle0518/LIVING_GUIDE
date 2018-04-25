@@ -83,13 +83,20 @@ public class ExcelUtils {
 			}
 			for (File f : file.listFiles(IMAGE_FILTER)) {
 				ExcelUtils eu = new ExcelUtils(f.getPath());
-				Map<String, Commodity> map = eu.analysisExcel();
-				SplitInvoice si = new SplitInvoice();
-				List<Invoice> invoiceList = new ArrayList<>();
-				si.equalsMAX(map, invoiceList);
-				eu.ecportExcel(invoiceList);
+				Map<String, Invoice> map = eu.analysisExcel();
+				if (map == null || map.size() == 0) {
+					continue;
+				}
+				for (String cess : map.keySet()) {
+					SplitInvoice si = new SplitInvoice();
+					List<Invoice> invoiceList = new ArrayList<>();
+					si.equalsMAX(map.get(cess), invoiceList);
+					eu.ecportExcel(invoiceList, cess);
+				}
+				eu.close();
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			try {
 				File file = new File("D:\\商品分析\\异常记录.txt");
 				if (file.exists()) {
@@ -97,7 +104,7 @@ public class ExcelUtils {
 				}
 				if (file.createNewFile()) {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-					bw.write("异常信息：" + e.toString());
+					bw.write("异常信息：" + e);
 					bw.close();
 				}
 			} catch (IOException e1) {
@@ -112,11 +119,11 @@ public class ExcelUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	private Map<String, Commodity> analysisExcel() throws IOException {
+	private Map<String, Invoice> analysisExcel() throws IOException {
 
 		Pattern pD = Pattern.compile(regExDoule);
 		// 获取每一个工作薄
-		Map<String, Commodity> map = new HashMap<>();
+		Map<String, Invoice> map = new HashMap<>();
 		if (workbook == null) {
 			return null;
 		}
@@ -138,6 +145,8 @@ public class ExcelUtils {
 					Cell three = row.getCell(2);
 					// 读取第四列数据
 					Cell four = row.getCell(3);
+					// 读取第五行数据
+					Cell five = row.getCell(4);
 					if (one != null && two != null && three != null && four != null) {
 						Matcher mT = pD.matcher(three.toString());
 						Matcher mF = pD.matcher(four.toString());
@@ -149,7 +158,12 @@ public class ExcelUtils {
 							commodity.setName(two.toString());
 							commodity.setNum(three.toString());
 							commodity.setTotal(four.toString());
-							map.put(one.toString(), commodity);
+							String cess = five.toString();
+							commodity.setCess(cess);
+							if (!map.containsKey(cess)) {
+								map.put(cess, new Invoice());
+							}
+							map.get(cess).getList().add(commodity);
 						}
 					}
 				}
@@ -159,8 +173,8 @@ public class ExcelUtils {
 		return map;
 	}
 
-	private void ecportExcel(List<Invoice> invoiceList) throws IOException {
-		Sheet sheet = workbook.createSheet("发票单");
+	private void ecportExcel(List<Invoice> invoiceList, String cess) throws IOException {
+		Sheet sheet = workbook.createSheet("税率"+cess+"的发票单");
 		// 设置缺省列高sheet.setDefaultColumnWidth(20);//设置缺省列宽
 		// sheet.setDefaultRowHeightInPoints(10);
 		// 设置指定列的列宽，256 * 50这种写法是因为width参数单位是单个字符的256分之一
@@ -179,6 +193,9 @@ public class ExcelUtils {
 		BigDecimal bg;
 		for (Invoice invoice : invoiceList) {
 			List<Commodity> commodityList = invoice.getList();
+			if (commodityList.size() == 0) {
+				continue;
+			}
 			Row rowi = sheet.createRow(++i);
 			rowi.createCell(0).setCellValue("发票清单：");
 			bg = new BigDecimal("0");
@@ -189,6 +206,7 @@ public class ExcelUtils {
 				rows.createCell(2).setCellValue(Double.parseDouble(commodity.getUnitPrice()));
 				rows.createCell(3).setCellValue(Double.parseDouble(commodity.getTotal()));
 				rows.createCell(4).setCellValue(commodity.getName());
+				rows.createCell(5).setCellValue(commodity.getCess());
 				bg = bg.add(new BigDecimal(commodity.getTotal()));
 			}
 			Row rows = sheet.createRow(++i);
@@ -203,6 +221,9 @@ public class ExcelUtils {
 			i++;
 			bg = null;
 		}
+	}
+	
+	public void close() throws IOException {
 		OutputStream os = new FileOutputStream(url);
 		workbook.write(os);
 		os.close();
