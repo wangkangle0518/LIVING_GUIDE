@@ -5,9 +5,12 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,6 +34,18 @@ public class AnalysisWord {
 			return str1.compareToIgnoreCase(str2);
 		}
 	});
+	
+	public List<Map.Entry<String, Questions>> sort() {
+		List<Map.Entry<String, Questions>> list = new ArrayList<Map.Entry<String, Questions>>(map.entrySet());
+		Collections.sort(list, new Comparator<Map.Entry<String, Questions>>() {
+			// 排序
+			public int compare(Entry<String, Questions> o1, Entry<String, Questions> o2) {
+				return o1.getValue().getAnswer().length() > o2.getValue().getAnswer().length() ? 1 : -1;
+			}
+
+		});
+		return list;
+	}
 	
 	private FileInputStream in;
 	

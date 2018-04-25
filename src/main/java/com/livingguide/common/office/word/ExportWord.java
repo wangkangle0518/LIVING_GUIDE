@@ -49,7 +49,7 @@ public class ExportWord {
 		// 左对齐
 		paragraph.setAlignment(ParagraphAlignment.LEFT);
 		if (style > 0) {
-			paragraph.setStyle(style + "");
+			paragraph.setStyle(style + "级");
 		}
 		// 运行段落
 	}
