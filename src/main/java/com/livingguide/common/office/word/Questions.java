@@ -10,7 +10,7 @@ public class Questions {
 	}
 
 	public String split(String question) {
-		String[] temp = question.split("[\\pP‘’“”]| ");
+		String[] temp = question.split("[\\pP‘’“”]| |\t");
 		Pattern pattern = Pattern.compile("^[0-9]*$");
 		int k = 0;
 		int i = temp.length;
@@ -60,7 +60,7 @@ public class Questions {
 	}
 	
 	public String getQuestionIsNoInterpunction() {
-		return question.replaceAll(" |[\\pP‘’“”]", "");
+		return question.replaceAll(" |[\\pP‘’“”]|\t", "");
 	}
 
 	public void setQuestion(String question) {

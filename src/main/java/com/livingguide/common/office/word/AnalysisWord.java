@@ -26,7 +26,7 @@ public class AnalysisWord {
 	private File dir;
 
 	private static final String[] EXTENSIONS = new String[] { "doc", "docx" };
-	
+
 	private static Map<String, Questions> map = new TreeMap<String, Questions>(new Comparator<String>() {
 
 		@Override
@@ -34,7 +34,7 @@ public class AnalysisWord {
 			return str1.compareToIgnoreCase(str2);
 		}
 	});
-	
+
 	public List<Map.Entry<String, Questions>> sort() {
 		List<Map.Entry<String, Questions>> list = new ArrayList<Map.Entry<String, Questions>>(map.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<String, Questions>>() {
@@ -46,9 +46,9 @@ public class AnalysisWord {
 		});
 		return list;
 	}
-	
+
 	private FileInputStream in;
-	
+
 	private static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
 		// @Override
 		public boolean accept(final File dir, final String name) {
@@ -78,17 +78,23 @@ public class AnalysisWord {
 			FileMagic fm = FileMagic.valueOf(is);
 			String path = f.getPath();
 			System.out.println(path);
-//			map.put(path, new Questions(path, path, ""));
+			// map.put(path, new Questions(path, path, ""));
 			if (fm == FileMagic.OLE2 && path.substring(path.length() - 3).equalsIgnoreCase("doc")) {
 				analysisDoc(path);
 			} else if (fm == FileMagic.OOXML && path.substring(path.length() - 4).equalsIgnoreCase("docx")) {
 				analysisDocx(path);
 			} else {
 				System.out.println("=========== 暂时无法解析 =====" + fm + "=====" + path);
+				if (!f.delete() && f.createNewFile()) {
+					System.out.println("=========== 删除 =====" + (f.delete() ? "成功" : "失败"));
+				} else {
+					System.out.println("=========== 删除 =====失败");
+				}
+
 			}
 			in.close();
 		}
-		
+
 		return map;
 	}
 
@@ -97,7 +103,7 @@ public class AnalysisWord {
 		HWPFDocument doc = new HWPFDocument(in);
 		Range range = doc.getRange();
 		int num = range.numParagraphs();
-		String[] question = new String[] {"","",""};
+		String[] question = new String[] { "", "", "" };
 		String tempStr;
 		for (int i = 0; i < num; i++) {
 			Paragraph para = range.getParagraph(i);
@@ -121,7 +127,7 @@ public class AnalysisWord {
 		in = new FileInputStream(new File(fileName));
 		XWPFDocument doc = new XWPFDocument(in);
 		List<XWPFParagraph> paras = doc.getParagraphs();
-		String[] question = new String[] {"","",""};
+		String[] question = new String[] { "", "", "" };
 		String tempStr;
 		for (XWPFParagraph para : paras) {
 			if (para.isEmpty()) {
@@ -142,11 +148,11 @@ public class AnalysisWord {
 		doc.close();
 		close();
 	}
-	
+
 	private String getTemp(String[] question, int i, String tempStr) {
 		if (question[0].length() > 0 && question[i].length() > 0) {
 			return question[i] + "\r\n" + tempStr;
-		} 
+		}
 		return tempStr;
 	}
 
@@ -165,7 +171,7 @@ public class AnalysisWord {
 			question[2] = "";
 		}
 	}
-	
+
 	private void close() {
 		if (in != null) {
 			try {

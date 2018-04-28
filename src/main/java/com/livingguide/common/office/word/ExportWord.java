@@ -70,7 +70,7 @@ public class ExportWord {
 		run.setText(text);
 		// 是否加粗
 		run.setBold(isBold);
-		run.setFontFamily("宋体");
+		run.setFontFamily("微软雅黑");
 		// 字体大小
 		run.setFontSize(fontSize);
 	}
